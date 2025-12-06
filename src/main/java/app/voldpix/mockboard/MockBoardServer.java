@@ -1,9 +1,8 @@
 package app.voldpix.mockboard;
 
 import app.voldpix.mockboard.config.AppConfig;
+import app.voldpix.mockboard.config.FreemarkerConfig;
 import app.voldpix.mockboard.web.Router;
-import freemarker.template.Configuration;
-import freemarker.template.Version;
 import io.javalin.Javalin;
 import io.javalin.http.staticfiles.Location;
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +29,7 @@ public class MockBoardServer {
                 staticFiles.location = Location.CLASSPATH;
             });
 
-            config.fileRenderer(null);//todo:
+            config.fileRenderer(new FreemarkerConfig());
         });
 
         new Router(app).register();
@@ -39,7 +38,7 @@ public class MockBoardServer {
     }
 
     public void start() {
-        log.info("Starting MockBoard on port {}", AppConfig.PORT);
+        log.info("Starting on port {}", AppConfig.PORT);
         app.start(AppConfig.PORT);
     }
 
@@ -50,9 +49,9 @@ public class MockBoardServer {
 
     private void registerShutdownHook() {
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            log.warn("Shutting down mockboard server...");
+            log.warn("Shutting down server...");
             this.stop();
-            log.info("MockBoard server stopped");
+            log.info("Server stopped");
         }));
     }
 }

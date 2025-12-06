@@ -5,14 +5,10 @@ import io.javalin.Javalin;
 import io.javalin.http.BadRequestResponse;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Map;
+
 @Slf4j
-public class Router {
-
-    private final Javalin app;
-
-    public Router(Javalin app) {
-        this.app = app;
-    }
+public record Router(Javalin app) {
 
     public void register() {
         app.before(ctx -> {
@@ -32,7 +28,10 @@ public class Router {
     }
 
     private void registerStatic() {
-        app.get("/", ctx -> ctx.json("home page"));
+        app.get("/", ctx -> ctx.render("index.ftlh", Map.of(
+                "title", "Hello FreeMarker + Javalin!",
+                "username", "Voldpix"
+        )));
         app.get("/{uuid}", ctx -> ctx.json("board page"));
     }
 
