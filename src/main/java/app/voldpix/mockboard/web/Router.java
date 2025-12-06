@@ -20,6 +20,10 @@ public class Router {
                 log.warn("Blocked large request from IP: {}", ctx.ip());
                 throw new BadRequestResponse("Request too large (Max 1MB)");
             }
+
+            ctx.header("Access-Control-Allow-Origin", "*");
+            ctx.header("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS");
+            ctx.header("Access-Control-Allow-Headers", "*");
         });
 
         registerStatic();
