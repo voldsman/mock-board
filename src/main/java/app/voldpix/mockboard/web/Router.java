@@ -28,7 +28,7 @@ public record Router(Javalin app) {
     }
 
     private void registerStatic() {
-        app.get("/", ctx -> ctx.render("index.ftlh", Map.of(
+        app.get("/", ctx -> ctx.render("landing.ftlh", Map.of(
                 "title", "Hello FreeMarker + Javalin!",
                 "username", "Voldpix"
         )));

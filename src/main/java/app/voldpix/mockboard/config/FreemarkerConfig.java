@@ -12,7 +12,7 @@ import java.io.StringWriter;
 import java.util.Locale;
 import java.util.Map;
 
-public class FreemarkerConfig implements FileRenderer {
+public final class FreemarkerConfig implements FileRenderer {
 
     private final Configuration configuration;
 
