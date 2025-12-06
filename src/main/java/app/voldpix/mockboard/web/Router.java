@@ -6,9 +6,15 @@ import io.javalin.http.BadRequestResponse;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public final class Router {
+public class Router {
 
-    public static void register(Javalin app) {
+    private final Javalin app;
+
+    public Router(Javalin app) {
+        this.app = app;
+    }
+
+    public void register() {
         app.before(ctx -> {
             if (ctx.req().getContentLength() > AppConfig.MAX_REQUEST_BODY_SIZE) {
                 log.warn("Blocked large request from IP: {}", ctx.ip());
@@ -16,8 +22,21 @@ public final class Router {
             }
         });
 
-        app.get("/", ctx -> ctx.redirect("/index.html"));
+        registerStatic();
+        registerApi();
+        registerWebsocket();
+    }
 
+    private void registerStatic() {
+        app.get("/", ctx -> ctx.json("home page"));
+        app.get("/{uuid}", ctx -> ctx.json("board page"));
+    }
+
+    private void registerApi() {
+        app.get("/api", ctx -> ctx.json("api home"));
+    }
+
+    private void registerWebsocket() {
         app.ws("/ws/{uuid}", ws -> {
             ws.onConnect(ctx -> log.info("Client connected: {}", ctx.sessionId()));
             ws.onMessage(ctx -> log.info("Message received: {}", ctx.sessionId()));

@@ -5,8 +5,6 @@ import app.voldpix.mockboard.web.Router;
 import io.javalin.Javalin;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.concurrent.Executors;
-
 @Slf4j
 public class MockBoardServer {
 
@@ -18,15 +16,15 @@ public class MockBoardServer {
             config.useVirtualThreads = true;
 
             if (AppConfig.DEV_MODE) {
-                config.requestLogger.http((ctx, ms) -> {
-                    log.info("{} {} - {}ms", ctx.method(), ctx.path(), ms);
-                });
+                config.requestLogger.http((ctx, ms) ->
+                        log.info("{} {} - {}ms", ctx.method(), ctx.path(), ms)
+                );
             }
 
             config.staticFiles.add("/web");
         });
 
-        Router.register(this.app);
+        new Router(app).register();
 
         registerShutdownHook();
     }
