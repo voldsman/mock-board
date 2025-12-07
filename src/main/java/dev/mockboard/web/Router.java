@@ -6,9 +6,12 @@ import io.javalin.http.BadRequestResponse;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
+import java.util.function.UnaryOperator;
 
 @Slf4j
 public record Router(Javalin app) {
+
+    private static final UnaryOperator<String> FREEMARKER_TEMPLATE_RESOLVER = template -> template + AppConfig.FREEMARKER_EXTENSION;
 
     public void register() {
         app.before(ctx -> {
@@ -28,13 +31,13 @@ public record Router(Javalin app) {
     }
 
     private void registerStatic() {
-        app.get("/", ctx -> ctx.render("landing.ftlh", Map.of(
+        app.get("/", ctx -> ctx.render(FREEMARKER_TEMPLATE_RESOLVER.apply("landing"), Map.of(
                 "version", AppConfig.APP_VERSION,
                 "githubURL", "https://github.com/voldsman/mock-board"
         )));
 
         app.post("/start", ctx -> ctx.redirect("/board/123"));
-        app.get("/board/{uuid}", ctx -> ctx.render("board.ftlh", Map.of(
+        app.get("/board/{uuid}", ctx -> ctx.render(FREEMARKER_TEMPLATE_RESOLVER.apply("board"), Map.of(
                 "version", AppConfig.APP_VERSION,
                 "uuid", "c75f7c66-e858-47d6-bb82-7ea5547c800c"
         )));

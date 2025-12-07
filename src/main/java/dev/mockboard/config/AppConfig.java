@@ -9,6 +9,7 @@ public final class AppConfig {
     // Server Config
     public static final int PORT = 8080;
     public static final boolean DEV_MODE = true;
+    public static final String FREEMARKER_EXTENSION = ".ftlh";
 
     // App Config
     public static final long MAX_REQUEST_BODY_SIZE = (long) 1024 * 1024; // 1MB
