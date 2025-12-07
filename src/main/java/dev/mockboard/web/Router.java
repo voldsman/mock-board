@@ -29,10 +29,13 @@ public record Router(Javalin app) {
 
     private void registerStatic() {
         app.get("/", ctx -> ctx.render("landing.ftlh", Map.of(
+                "version", AppConfig.APP_VERSION,
                 "githubURL", "https://github.com/voldsman/mock-board"
         )));
+
         app.post("/start", ctx -> ctx.redirect("/board/123"));
         app.get("/board/{uuid}", ctx -> ctx.render("board.ftlh", Map.of(
+                "version", AppConfig.APP_VERSION,
                 "uuid", "c75f7c66-e858-47d6-bb82-7ea5547c800c"
         )));
     }

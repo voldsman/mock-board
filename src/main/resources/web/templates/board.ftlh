@@ -7,7 +7,7 @@
     <title>MockBoard Session</title>
 
     <link href="/css/bootstrap-4.5.3.min.css" rel="stylesheet">
-    <link href="/css/style.css" rel="stylesheet">
+    <link href="/css/style.css?v=${version}" rel="stylesheet">
 </head>
 <body>
 <h1>MockBoard Session</h1>
@@ -16,6 +16,6 @@
 
 <script src="/js/jquery-3.5.1.slim.min.js"></script>
 <script src="/js/bootstrap-4.5.3.bundle.min.js"></script>
-<script src="/js/app.js"></script>
+<script src="/js/app.js?v=${version}"></script>
 </body>
 </html>

@@ -13,7 +13,7 @@
     <meta property="og:description" content="Stop waiting for the backend. Mock APIs in seconds.">
 
     <link href="/css/bootstrap-4.5.3.min.css" rel="stylesheet">
-    <link href="/css/style.css" rel="stylesheet">
+    <link href="/css/style.css?v=${version}" rel="stylesheet">
 
     <script type="application/ld+json">
         {
