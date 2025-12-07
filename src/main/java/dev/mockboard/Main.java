@@ -1,4 +1,4 @@
-package app.voldpix.mockboard;
+package dev.mockboard;
 
 public class Main {
 

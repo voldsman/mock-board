@@ -1,11 +1,13 @@
-package app.voldpix.mockboard;
+package dev.mockboard;
 
-import app.voldpix.mockboard.config.AppConfig;
-import app.voldpix.mockboard.config.FreemarkerConfig;
-import app.voldpix.mockboard.web.Router;
+import dev.mockboard.config.AppConfig;
+import dev.mockboard.config.FreemarkerConfig;
+import dev.mockboard.web.Router;
 import io.javalin.Javalin;
 import io.javalin.http.staticfiles.Location;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.Map;
 
 @Slf4j
 public class MockBoardServer {
@@ -27,7 +29,11 @@ public class MockBoardServer {
                 staticFiles.hostedPath = "/";
                 staticFiles.directory = "/web";
                 staticFiles.location = Location.CLASSPATH;
+                staticFiles.headers = Map.of(
+                        "Cache-Control", "max-age=1814400, public"
+                );
             });
+
 
             config.fileRenderer(new FreemarkerConfig());
         });

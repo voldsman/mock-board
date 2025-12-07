@@ -1,4 +1,4 @@
-package app.voldpix.mockboard.config;
+package dev.mockboard.config;
 
 import freemarker.cache.ClassTemplateLoader;
 import freemarker.template.Configuration;

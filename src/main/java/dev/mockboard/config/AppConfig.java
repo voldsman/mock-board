@@ -1,4 +1,4 @@
-package app.voldpix.mockboard.config;
+package dev.mockboard.config;
 
 public final class AppConfig {
 

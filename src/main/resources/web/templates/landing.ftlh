@@ -2,7 +2,7 @@
 <html lang="en" data-bs-theme="dark">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <title>MockBoard | The Instant API Mock Server & Webhook Tester</title>
     <meta name="description" content="Generate instant fake HTTP endpoints for development. MockBoard is a free, no-login API simulator for frontend testing, webhooks, and prototyping.">

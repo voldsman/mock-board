@@ -1,6 +1,6 @@
-package app.voldpix.mockboard.web;
+package dev.mockboard.web;
 
-import app.voldpix.mockboard.config.AppConfig;
+import dev.mockboard.config.AppConfig;
 import io.javalin.Javalin;
 import io.javalin.http.BadRequestResponse;
 import lombok.extern.slf4j.Slf4j;
