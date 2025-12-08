@@ -1,8 +1,8 @@
 $(document).ready(function(){
     console.log("Ready!");
 
-    const uuid = "123";
-    const ws = new BoardWS('ws://localhost:8080/ws/' + uuid);
+    const uuid = window.MockBoard ? window.MockBoard.sessionId : "unknown";
+    const ws = new BoardWS('ws://'+ location.host + '/ws/' + uuid);
 
     const messages = $("#messages");
     const input = $("#msgInput");
@@ -17,6 +17,8 @@ $(document).ready(function(){
 
     $("#sendBtn").click(sendMsg);
     input.on("keypress", e => { if (e.which === 13) sendMsg(); });
+
+    // $("#resetBtn").click(() => window.location.href = "/reset");
 
     function sendMsg() {
         const msg = input.val().trim();

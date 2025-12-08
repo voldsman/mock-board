@@ -25,8 +25,8 @@ class BoardWS {
 
             // Reset backoff
             this.connectTimeout = 1000;
+            this.reconnectAttempts = 0;
 
-            // Flush queued messages
             this.messageQueue.forEach(m => this.ws.send(m));
             this.messageQueue = [];
 

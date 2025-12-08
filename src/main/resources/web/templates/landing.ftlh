@@ -28,6 +28,11 @@
 <body>
 <h1>MockBoard Landing</h1>
 
+<br>
+<form action="/start" method="POST">
+    <button type="submit" class="btn btn-primary">Start Session</button>
+</form>
+
 <script src="/js/jquery-3.5.1.slim.min.js"></script>
 <script src="/js/bootstrap-4.5.3.bundle.min.js"></script>
 </body>

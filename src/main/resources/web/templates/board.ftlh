@@ -27,6 +27,12 @@
 <script src="/js/bootstrap-4.5.3.bundle.min.js"></script>
 
 <script src="/js/board-ws.js?v=${version}"></script>
+<script>
+    window.MockBoard = {
+        sessionId: "${sessionId}",
+        version: "${version}"
+    }
+</script>
 <script src="/js/app.js?v=${version}"></script>
 </body>
 </html>

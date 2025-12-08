@@ -1,12 +1,15 @@
 package dev.mockboard.web;
 
 import dev.mockboard.config.AppConfig;
+import dev.mockboard.web.ws.WsManager;
 import io.javalin.Javalin;
 import io.javalin.http.BadRequestResponse;
+import io.javalin.http.Cookie;
 import lombok.extern.slf4j.Slf4j;
 import net.datafaker.Faker;
 
 import java.util.Map;
+import java.util.UUID;
 import java.util.function.UnaryOperator;
 
 @Slf4j
@@ -32,16 +35,46 @@ public record Router(Javalin app) {
     }
 
     private void registerStatic() {
-        app.get("/", ctx -> ctx.render(FREEMARKER_TEMPLATE_RESOLVER.apply("landing"), Map.of(
-                "version", AppConfig.APP_VERSION,
-                "githubURL", "https://github.com/voldsman/mock-board"
-        )));
+        app.get("/", ctx -> {
+            var existingSession = ctx.cookie(AppConfig.SESSION_COOKIE_NAME);
+            if (existingSession != null && !existingSession.isBlank()) {
+                ctx.redirect("/board/" + existingSession);
+                return;
+            }
 
-        app.post("/start", ctx -> ctx.redirect("/board/123"));
-        app.get("/board/{uuid}", ctx -> ctx.render(FREEMARKER_TEMPLATE_RESOLVER.apply("board"), Map.of(
-                "version", AppConfig.APP_VERSION,
-                "uuid", "c75f7c66-e858-47d6-bb82-7ea5547c800c"
-        )));
+            ctx.render(FREEMARKER_TEMPLATE_RESOLVER.apply("landing"), Map.of(
+                    "version", AppConfig.APP_VERSION,
+                    "githubURL", "https://github.com/voldsman/mock-board"
+            ));
+        });
+
+        app.post("/start", ctx -> {
+            var newSessionId = UUID.randomUUID().toString();
+
+            var sessionCookie = new Cookie(AppConfig.SESSION_COOKIE_NAME, newSessionId);
+            sessionCookie.setHttpOnly(true);
+            sessionCookie.setMaxAge(AppConfig.COOKIE_MAX_AGE);
+            sessionCookie.setPath("/");
+
+            ctx.cookie(sessionCookie);
+            ctx.redirect("/board/" + newSessionId);
+        });
+
+        app.get("/board/{sessionId}", ctx -> {
+            var urlSessionId = ctx.pathParam("sessionId");
+            var cookieSessionId = ctx.cookie(AppConfig.SESSION_COOKIE_NAME);
+
+            if (cookieSessionId == null || !cookieSessionId.equalsIgnoreCase(urlSessionId)) {
+                ctx.cookie("");//tmp
+                ctx.redirect("/");
+                return;
+            }
+
+            ctx.render(FREEMARKER_TEMPLATE_RESOLVER.apply("board"), Map.of(
+                    "version", AppConfig.APP_VERSION,
+                    "sessionId", urlSessionId
+            ));
+        });
     }
 
     private void registerApi() {
@@ -49,27 +82,33 @@ public record Router(Javalin app) {
     }
 
     private void registerWebsocket() {
-        app.ws("/ws/{uuid}", ws -> {
+        app.ws("/ws/{boardId}", ws -> {
             ws.onConnect(ctx -> {
-                log.info("Client connected: {}", ctx.sessionId());
+                var boardId = ctx.pathParam("boardId");
+                WsManager.add(boardId, ctx);
 
-                Faker faker = new Faker();
-                ctx.send("[" + ctx.sessionId() + ":" + faker.name().fullName() + "] connected");
+                log.info("Board rejoined: {}", boardId);
+                // WsManager.broadcast(boardId, "System: Session " + boardId + " active.");
             });
             ws.onMessage(ctx -> {
-                String msg = ctx.message();
-                log.info("Message received from {}: {}", ctx.sessionId(), msg);
+                var msg = ctx.message();
 
                 if (msg.equals("_ping")) {
                     ctx.send("_pong");
                     return;
                 }
 
-                ctx.send("[" + ctx.sessionId() + "] " + msg);
+                var boardId = ctx.pathParam("boardId");
+                WsManager.broadcast(boardId, "User: " + msg);
             });
             ws.onClose(ctx -> {
-                log.info("Client disconnected: {}", ctx.sessionId());
-                ctx.send("🔴 User left: " + ctx.sessionId());
+                var boardId = ctx.pathParam("boardId");
+                WsManager.remove(boardId, ctx);
+            });
+            ws.onError(ctx -> {
+                log.error("WS error: {}", ctx.error() != null ? ctx.error().getMessage() : "null");
+                var boardId = ctx.pathParam("boardId");
+                WsManager.remove(boardId, ctx);
             });
         });
     }

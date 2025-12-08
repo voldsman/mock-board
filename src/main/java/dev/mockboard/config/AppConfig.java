@@ -16,4 +16,8 @@ public final class AppConfig {
     public static final int MAX_HISTORY_PER_SESSION = 20;
     public static final int SESSION_TIMEOUT_MINUTES = 60;
 
+    // Cookie Config
+    public static final String SESSION_COOKIE_NAME = "MOCK_BOARD_ID";
+    public static final int COOKIE_MAX_AGE = 60 * 60;// 1h
+
 }
