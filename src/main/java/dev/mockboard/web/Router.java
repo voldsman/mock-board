@@ -4,6 +4,7 @@ import dev.mockboard.config.AppConfig;
 import io.javalin.Javalin;
 import io.javalin.http.BadRequestResponse;
 import lombok.extern.slf4j.Slf4j;
+import net.datafaker.Faker;
 
 import java.util.Map;
 import java.util.function.UnaryOperator;
@@ -49,9 +50,27 @@ public record Router(Javalin app) {
 
     private void registerWebsocket() {
         app.ws("/ws/{uuid}", ws -> {
-            ws.onConnect(ctx -> log.info("Client connected: {}", ctx.sessionId()));
-            ws.onMessage(ctx -> log.info("Message received: {}", ctx.sessionId()));
-            ws.onClose(ctx -> log.info("Client disconnected: {}", ctx.sessionId()));
+            ws.onConnect(ctx -> {
+                log.info("Client connected: {}", ctx.sessionId());
+
+                Faker faker = new Faker();
+                ctx.send("[" + ctx.sessionId() + ":" + faker.name().fullName() + "] connected");
+            });
+            ws.onMessage(ctx -> {
+                String msg = ctx.message();
+                log.info("Message received from {}: {}", ctx.sessionId(), msg);
+
+                if (msg.equals("_ping")) {
+                    ctx.send("_pong");
+                    return;
+                }
+
+                ctx.send("[" + ctx.sessionId() + "] " + msg);
+            });
+            ws.onClose(ctx -> {
+                log.info("Client disconnected: {}", ctx.sessionId());
+                ctx.send("🔴 User left: " + ctx.sessionId());
+            });
         });
     }
 }
