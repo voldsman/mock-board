@@ -13,3 +13,32 @@ body {
     font-family: 'Roboto Mono', system-ui, -apple-system, sans-serif;
     overflow-x: hidden;
 }
+
+.nav-tabs .nav-link.active {
+    background-color: var(--brand-dark) !important;
+    border-color: #444 #444 var(--brand-dark) !important;
+    color: var(--brand-primary) !important;
+}
+.nav-tabs .nav-link {
+    color: #aaa;
+}
+.nav-tabs .nav-link:hover {
+    color: #fff;
+    border-color: #444;
+}
+
+.rule-card {
+    transition: transform 0.2s, box-shadow 0.2s;
+    border: 1px solid #2d3748 !important;
+}
+
+.rule-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 .5rem 1rem rgba(0,0,0,.3) !important;
+    border-color: var(--brand-primary) !important;
+}
+
+.rule-card .badge {
+    min-width: 60px;
+    text-align: center;
+}

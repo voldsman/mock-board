@@ -1,6 +1,9 @@
 package dev.mockboard.web;
 
 import dev.mockboard.config.AppConfig;
+import dev.mockboard.storage.RuleStore;
+import dev.mockboard.web.model.MockRule;
+import dev.mockboard.web.model.RuleRequest;
 import dev.mockboard.web.ws.WsManager;
 import io.javalin.Javalin;
 import io.javalin.http.BadRequestResponse;
@@ -79,6 +82,32 @@ public record Router(Javalin app) {
 
     private void registerApi() {
         app.get("/api", ctx -> ctx.json("api home"));
+
+        app.get("/api/board/{boardId}/rules", ctx -> {
+            var boardId = ctx.pathParam("boardId");
+            ctx.json(RuleStore.getRules(boardId));
+        });
+
+        app.post("/api/board/{boardId}/rules", ctx -> {
+            var boardId = ctx.pathParam("boardId");
+
+            var request = ctx.bodyAsClass(RuleRequest.class);
+            if (request.path() == null || request.path().isBlank()) {
+                throw new BadRequestResponse("Path is required");
+            }
+
+            MockRule rule = MockRule.create(
+                    request.method(),
+                    request.path(),
+                    request.status(),
+                    request.contentType(),
+                    request.body(),
+                    request.delay()
+            );
+            RuleStore.addRule(boardId, rule);
+            WsManager.broadcast(boardId, "SYSTEM: Rule added: " + rule.path());
+            ctx.status(201).json(rule);
+        });
     }
 
     private void registerWebsocket() {

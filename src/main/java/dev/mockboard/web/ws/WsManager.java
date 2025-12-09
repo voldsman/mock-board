@@ -8,7 +8,9 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
-public class WsManager {
+public final class WsManager {
+
+    private WsManager() {}
 
     private static final Map<String, Set<WsContext>> boardSessions = new ConcurrentHashMap<>();
 

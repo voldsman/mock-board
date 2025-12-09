@@ -5,6 +5,7 @@ import dev.mockboard.config.FreemarkerConfig;
 import dev.mockboard.web.Router;
 import io.javalin.Javalin;
 import io.javalin.http.staticfiles.Location;
+import io.javalin.json.JavalinJackson;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
@@ -36,6 +37,7 @@ public class MockBoardServer {
 
 
             config.fileRenderer(new FreemarkerConfig());
+            config.jsonMapper(new JavalinJackson());
         });
 
         new Router(app).register();
