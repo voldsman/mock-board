@@ -34,6 +34,7 @@ public record Router(Javalin app) {
         });
 
         app.get("/", this::registerIndex);
+        app.get("/board/{boardId}", this::registerIndex);
 
         registerApi();
         registerWebsocket();
