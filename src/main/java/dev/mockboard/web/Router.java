@@ -7,9 +7,10 @@ import dev.mockboard.web.model.RuleRequest;
 import dev.mockboard.web.ws.WsManager;
 import io.javalin.Javalin;
 import io.javalin.http.BadRequestResponse;
+import io.javalin.http.ContentType;
+import io.javalin.http.Context;
 import io.javalin.http.Cookie;
 import lombok.extern.slf4j.Slf4j;
-import net.datafaker.Faker;
 
 import java.util.Map;
 import java.util.UUID;
@@ -32,56 +33,46 @@ public record Router(Javalin app) {
             ctx.header("Access-Control-Allow-Headers", "*");
         });
 
-        registerStatic();
+        app.get("/", this::registerIndex);
+
         registerApi();
         registerWebsocket();
+
+        app.error(404, ctx -> {
+            var acceptHeader = ctx.header("Accept");
+            if (acceptHeader != null && acceptHeader.contains(ContentType.HTML)) {
+                registerIndex(ctx);
+            }
+        });
     }
 
-    private void registerStatic() {
-        app.get("/", ctx -> {
-            var existingSession = ctx.cookie(AppConfig.SESSION_COOKIE_NAME);
-            if (existingSession != null && !existingSession.isBlank()) {
-                ctx.redirect("/board/" + existingSession);
-                return;
-            }
-
-            ctx.render(FREEMARKER_TEMPLATE_RESOLVER.apply("landing"), Map.of(
-                    "version", AppConfig.APP_VERSION,
-                    "githubURL", "https://github.com/voldsman/mock-board"
-            ));
-        });
-
-        app.post("/start", ctx -> {
-            var newSessionId = UUID.randomUUID().toString();
-
-            var sessionCookie = new Cookie(AppConfig.SESSION_COOKIE_NAME, newSessionId);
-            sessionCookie.setHttpOnly(true);
-            sessionCookie.setMaxAge(AppConfig.COOKIE_MAX_AGE);
-            sessionCookie.setPath("/");
-
-            ctx.cookie(sessionCookie);
-            ctx.redirect("/board/" + newSessionId);
-        });
-
-        app.get("/board/{sessionId}", ctx -> {
-            var urlSessionId = ctx.pathParam("sessionId");
-            var cookieSessionId = ctx.cookie(AppConfig.SESSION_COOKIE_NAME);
-
-            if (cookieSessionId == null || !cookieSessionId.equalsIgnoreCase(urlSessionId)) {
-                ctx.cookie("");//tmp
-                ctx.redirect("/");
-                return;
-            }
-
-            ctx.render(FREEMARKER_TEMPLATE_RESOLVER.apply("board"), Map.of(
-                    "version", AppConfig.APP_VERSION,
-                    "sessionId", urlSessionId
-            ));
-        });
+    private void registerIndex(Context ctx) {
+        ctx.contentType(ContentType.HTML);
+        var index = getClass().getResourceAsStream("/web/index.html");
+        if (index != null) {
+            ctx.result(index);
+        } else {
+            ctx.status(500).result("Frontend not found. Run 'npm run build' in src/main/frontend.");
+        }
     }
 
     private void registerApi() {
         app.get("/api", ctx -> ctx.json("api home"));
+
+        app.post("/api/start", ctx -> {
+            var sessionId = UUID.randomUUID().toString();
+            var sessionCookie = new Cookie(AppConfig.SESSION_COOKIE_NAME, sessionId);
+            sessionCookie.setHttpOnly(true);
+            sessionCookie.setMaxAge(AppConfig.COOKIE_MAX_AGE);
+            sessionCookie.setPath("/");
+            ctx.cookie(sessionCookie);
+            ctx.json(Map.of("sessionId", sessionId));
+        });
+
+        app.post("/api/reset", ctx -> {
+            ctx.removeCookie(AppConfig.SESSION_COOKIE_NAME);
+            ctx.json("ok");
+        });
 
         app.get("/api/board/{boardId}/rules", ctx -> {
             var boardId = ctx.pathParam("boardId");

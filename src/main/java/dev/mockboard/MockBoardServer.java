@@ -1,14 +1,11 @@
 package dev.mockboard;
 
 import dev.mockboard.config.AppConfig;
-import dev.mockboard.config.FreemarkerConfig;
 import dev.mockboard.web.Router;
 import io.javalin.Javalin;
 import io.javalin.http.staticfiles.Location;
 import io.javalin.json.JavalinJackson;
 import lombok.extern.slf4j.Slf4j;
-
-import java.util.Map;
 
 @Slf4j
 public class MockBoardServer {
@@ -30,13 +27,8 @@ public class MockBoardServer {
                 staticFiles.hostedPath = "/";
                 staticFiles.directory = "/web";
                 staticFiles.location = Location.CLASSPATH;
-                staticFiles.headers = Map.of(
-                        "Cache-Control", "max-age=1814400, public"
-                );
+                staticFiles.precompress = true;
             });
-
-
-            config.fileRenderer(new FreemarkerConfig());
             config.jsonMapper(new JavalinJackson());
         });
 
