@@ -15,7 +15,7 @@ export default defineConfig({
         },
     },
     build: {
-        outDir: '../resources/web',
+        outDir: '../resources/static',
         emptyOutDir: true,
     },
     server: {

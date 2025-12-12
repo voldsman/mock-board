@@ -1,41 +1,63 @@
 <script setup>
-import {useBoardStore} from "@/stores/boardStore.js";
-import {storeToRefs} from "pinia";
+import {useBoardStore} from "@/stores/boardStore";
 
 const store = useBoardStore()
-const {sessionId, isConnected, webhookUrl} = storeToRefs(store)
 
 function copyUrl() {
-  navigator.clipboard.writeText(webhookUrl.value)
-  alert("Copied!")
+    if (store.webhookUrl) {
+        navigator.clipboard.writeText(store.webhookUrl)
+        alert("Copied!")
+    }
 }
 </script>
 
 <template>
-  <nav class="navbar navbar-expand-md navbar-dark bg-dark border-bottom border-secondary"
-       style="height: 60px;">
+    <v-app-bar density="default" elevation="1" color="surface">
+        <v-app-bar-title class="fond-weight-bold ml-2" style="max-width: 200px;">
+            <span class="text-primary">&lt;/&gt;</span> MockBoard
+        </v-app-bar-title>
 
-    <div class="container-fluid">
-      <a class="navbar-brand fw-bold" href="#">
-        <span class="text-primary">&lt;/&gt;</span> MockBoard
-      </a>
+        <v-spacer></v-spacer>
 
-      <div class="mx-auto w-50 d-none d-md-block">
-        <div class="input-group input-group-sm">
-          <span class="input-group-text bg-dark text-muted">URL</span>
-          <input type="text" class="form-control bg-dark text-light border-secondary text-center font-monospace"
-          :value="webhookUrl" readonly>
-          <button class="btn btn-outline-primary" @click="copyUrl">Copy</button>
-      </div>
-    </div>
+        <div class="mt-5" style="width: 500px; max-width: 800px;">
+            <v-text-field
+                :model-value="store.webhookUrl"
+                readonly
+                variant="outlined"
+                density="compact"
+                bg-color="background"
+                placeholder="Waiting for session..."
+                prepend-inner-icon="mdi-web"
+                class="font-monospace"
+            >
+                <template v-slot:append-inner>
+                    <v-btn 
+                        size="small"
+                        color="primary"
+                        variant="text"
+                        @click="copyUrl"
+                        >Copy</v-btn>
+                </template>
+            </v-text-field>
+        </div>
 
-    <div class="d-flex align-items-center">
-        <span class="badge rounded-pill me-3"
-      :class="isConnected ? 'bg-success' : 'bg-danger'">
-      {{ isConnected ? 'Connected' : 'Offline' }}
-    </span>
-    <span class="text-muted small font-monospace">ID: {{ sessionId?.substring(0,6) }}...</span>
-  </div>
-</div>
-</nav>
+        <v-spacer></v-spacer>
+
+        <v-chip
+            :color="store.isConnected ? 'success' : 'error'"
+            size="small"
+            class="mr-4 fond-weight-bold"
+            variant="flat"
+        >
+        {{ store.isConnected ? 'Connected' : 'Offline' }}
+        </v-chip>
+
+        <v-btn icon="mdi-logout" size="small" color="error" variant="text" class="ml-2" title="Reset Session"></v-btn>
+    </v-app-bar>
 </template>
+
+<style scoped>
+.font-monospace {
+  font-family: 'Roboto Mono', monospace !important;
+}
+</style>

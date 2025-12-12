@@ -3,45 +3,30 @@ import { onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useBoardStore } from '@/stores/boardStore'
 import TopBar from '@/components/TopBar.vue'
+import RequestHistory from '@/components/RequestHistory.vue'
 
 const route = useRoute()
 const store = useBoardStore()
 
 onMounted(() => {
-    store.init(route.params.sessionId)
+    store.init()
 })
 </script>
 
 <template>
-    <div class="vh-100 d-flex flex-column bg-dark text-light">
+    <div class="fill-height">
         <TopBar />
 
-        <div class="container-fluid flex-grow-1 overflow-hidden">
-            <div class="row h-100">
+        <RequestHistory />
 
-                <div class="col-md-3 border-end border-secondary p-0 d-flex flex-column">
-                    <div class="p-2 border-bottom border-secondary bg-darker">
-                        <small class="text-muted fw-bold">REQUESTS</small>
-                    </div>
-                    <div class="flex-grow-1 overflow-auto">
-                        <div class="p-3 text-muted text-center small">
-                            No requests yet...
-                        </div>
-                    </div>
+        <v-main class="bg-background">
+            <v-container fluid class="pa-6">
+                <div class="d-flex flex-column align-center justify-center h-50 text-grey">
+                    <v-icon size="64" class="mb-4">mdi-view-dashboard-outline</v-icon>
+                    <h3 class="text-h5 font-weight-light">Dashboard Area</h3>
+                    <p>Rules grid will go here</p>
                 </div>
-
-                <div class="col-md-9 bg-darker p-4">
-                    <h3>Mock Rules</h3>
-                    <p class="text-secondary">Rules will appear here.</p>
-                </div>
-
-            </div>
-        </div>
+            </v-container>
+        </v-main>
     </div>
 </template>
-
-<style>
-.bg-darker {
-    background-color: #1e293b;
-}
-</style>
