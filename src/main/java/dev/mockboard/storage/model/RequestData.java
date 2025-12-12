@@ -3,12 +3,13 @@ package dev.mockboard.storage.model;
 import lombok.Builder;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
 @Data
 @Builder
-public class HttpRequestData {
+public class RequestData implements Serializable {
     private long timestamp;
 
     private String method;

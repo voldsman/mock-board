@@ -12,6 +12,7 @@ public class Constants {
 
     public static final String MOCK_PATH_PREFIX = "/m";
 
-    public static final int MAX_RECENT_REQUESTS = 20;
+    public static final int MAX_RECENT_REQUESTS = 12;
+    public static final int MAX_MOCK_RULES = 12;
 
 }

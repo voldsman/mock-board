@@ -1,12 +1,10 @@
 package dev.mockboard.config.handler;
 
-import dev.mockboard.storage.BoardSessionStorage;
-import dev.mockboard.storage.WsSessionStorage;
+import dev.mockboard.storage.SessionStorage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
-import org.springframework.web.socket.PongMessage;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
@@ -18,18 +16,17 @@ import java.net.URI;
 @RequiredArgsConstructor
 public class BoardWebSocketHandler extends TextWebSocketHandler {
 
-    private final BoardSessionStorage boardSessionStorage;
-    private final WsSessionStorage wsSessionStorage;
+    private final SessionStorage sessionStorage;
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         var boardId = extractBoardId(session);
-        if (!boardSessionStorage.isValidSession(boardId)) {
+        if (!sessionStorage.isValidSession(boardId)) {
             session.close(CloseStatus.BAD_DATA);
         }
 
         if (boardId != null) {
-            wsSessionStorage.addSession(boardId, session);
+            sessionStorage.addWsSession(boardId, session);
         } else {
             session.close(CloseStatus.BAD_DATA);
         }
@@ -43,7 +40,7 @@ public class BoardWebSocketHandler extends TextWebSocketHandler {
         }
 
         var boardId = extractBoardId(session);
-        if (!boardSessionStorage.isValidSession(boardId)) {
+        if (!sessionStorage.isValidSession(boardId)) {
             session.close(CloseStatus.NOT_ACCEPTABLE);
         }
     }
@@ -52,7 +49,7 @@ public class BoardWebSocketHandler extends TextWebSocketHandler {
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
         var boardId = extractBoardId(session);
         if (boardId != null) {
-            wsSessionStorage.removeSession(boardId, session);
+            sessionStorage.removeWsSession(boardId, session);
             log.info("Client disconnected from board: {}", boardId);
         }
     }

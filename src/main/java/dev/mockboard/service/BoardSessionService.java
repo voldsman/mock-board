@@ -1,7 +1,6 @@
 package dev.mockboard.service;
 
-import dev.mockboard.storage.BoardSessionStorage;
-import dev.mockboard.storage.WsSessionStorage;
+import dev.mockboard.storage.SessionStorage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -11,20 +10,19 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class BoardSessionService {
 
-    private final BoardSessionStorage boardSessionStorage;
-    private final WsSessionStorage wsSessionStorage;
+    private final SessionStorage sessionStorage;
 
     public String createSession(final String existingSessionId) {
         String sessionId;
-        if (existingSessionId != null && boardSessionStorage.isValidSession(existingSessionId)) {
+        if (existingSessionId != null && sessionStorage.isValidSession(existingSessionId)) {
             sessionId = existingSessionId;
             log.info("Reusing exising session: {}", sessionId);
         } else if (existingSessionId != null) {
             sessionId = existingSessionId;
-            boardSessionStorage.addSession(sessionId);
+            sessionStorage.restoreSession(sessionId);
             log.info("Restored session after restart: {}", sessionId);
         } else {
-            sessionId = boardSessionStorage.createSession();
+            sessionId = sessionStorage.createSession();
             log.info("Created new session: {}", sessionId);
         }
 
@@ -33,7 +31,6 @@ public class BoardSessionService {
 
     public void removeSession(final String sessionId) {
         log.info("Removing session: {}", sessionId);
-        boardSessionStorage.removeSession(sessionId);
-        wsSessionStorage.removeSession(sessionId);
+        sessionStorage.removeSession(sessionId);
     }
 }

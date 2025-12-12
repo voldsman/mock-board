@@ -1,7 +1,7 @@
 package dev.mockboard.service;
 
 import dev.mockboard.Constants;
-import dev.mockboard.storage.model.HttpRequestData;
+import dev.mockboard.storage.model.RequestData;
 import dev.mockboard.web.ws.WsPublisher;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +21,7 @@ public class RequestCaptureService {
 
     public void captureRequest(String sessionId, HttpServletRequest request) {
         try {
-            HttpRequestData requestData = HttpRequestData.builder()
+            RequestData requestData = RequestData.builder()
                     .timestamp(System.currentTimeMillis())
                     .method(request.getMethod())
                     .path(extractPath(sessionId, request.getRequestURI()))

@@ -1,6 +1,7 @@
 <script setup>
-import {useBoardStore} from "@/stores/boardStore.js";
 import {onMounted, onUnmounted, ref} from "vue";
+import {useBoardStore} from "@/stores/boardStore.js";
+import {formatRelativeTime} from "@/utils/timeFormatter.js";
 
 const store = useBoardStore()
 
@@ -34,21 +35,6 @@ function getStatusColor(status) {
   if (status >= 500) return 'text-red'
   return 'text-grey'
 }
-
-function formatRelativeTime(timestamp) {
-    const now = Date.now();
-    const diff = now - timestamp;
-
-    const seconds = Math.floor(diff / 1000);
-    const minutes = Math.floor(seconds / 60);
-    const hours = Math.floor(minutes / 60);
-    const days = Math.floor(hours / 24);
-
-    if (seconds < 60) return 'just now';
-    if (minutes < 60) return `${minutes}m ago`;
-    if (hours < 24) return `${hours}h ago`;
-    return `${days}d ago`;
-}
 </script>
 
 <template>
@@ -70,7 +56,7 @@ function formatRelativeTime(timestamp) {
                 class="border-b"
                 disabled
             >
-            Received requests will be shown here
+            Received requests goes here
             </v-list-item>
 
             <v-list-item 

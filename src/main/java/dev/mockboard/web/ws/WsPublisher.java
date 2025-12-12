@@ -1,6 +1,6 @@
 package dev.mockboard.web.ws;
 
-import dev.mockboard.storage.WsSessionStorage;
+import dev.mockboard.storage.SessionStorage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -13,10 +13,10 @@ import org.springframework.web.socket.WebSocketSession;
 @RequiredArgsConstructor
 public class WsPublisher {
 
-    public final WsSessionStorage wsSessionStorage;
+    public final SessionStorage sessionStorage;
 
     public void broadcast(String sessionId, String message) {
-        var wsSessions = wsSessionStorage.getSessions(sessionId);
+        var wsSessions = sessionStorage.getWsSessions(sessionId);
         if (!CollectionUtils.isEmpty(wsSessions)) {
             wsSessions.stream()
                     .filter(WebSocketSession::isOpen)

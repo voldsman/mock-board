@@ -1,35 +1,32 @@
 package dev.mockboard.storage.model;
 
-import dev.mockboard.Constants;
+import lombok.Data;
 import lombok.Getter;
+import org.springframework.web.socket.WebSocketSession;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ConcurrentLinkedDeque;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
+@Data
 public class SessionData implements Serializable {
-    private final ConcurrentLinkedDeque<HttpRequestData> recentRequests = new ConcurrentLinkedDeque<>();
-    private final CopyOnWriteArrayList<String> mockRules = new CopyOnWriteArrayList<>();
+
+    private final Set<WebSocketSession> webSocketSessions = ConcurrentHashMap.newKeySet();
+    private final BoardData boardData = new BoardData();
 
     @Getter
     private final AtomicLong lastAccessTime = new AtomicLong(System.currentTimeMillis());
 
-    public void addRequest(HttpRequestData request) {
-        recentRequests.addFirst(request);
-
-        while (recentRequests.size() > Constants.MAX_RECENT_REQUESTS) {
-            recentRequests.removeLast();
-        }
-    }
-
-    public List<HttpRequestData> getRecentRequests() {
-        return new ArrayList<>(recentRequests);
-    }
-
     public void touchLastAccessTime() {
         lastAccessTime.set(System.currentTimeMillis());
+    }
+
+    public void addWebSocketSession(WebSocketSession webSocketSession) {
+        webSocketSessions.add(webSocketSession);
+    }
+
+    public void removeWebSocketSession(WebSocketSession webSocketSession) {
+        webSocketSessions.remove(webSocketSession);
     }
 }
