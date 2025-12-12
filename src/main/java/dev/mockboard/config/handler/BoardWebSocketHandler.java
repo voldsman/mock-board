@@ -20,13 +20,13 @@ public class BoardWebSocketHandler extends TextWebSocketHandler {
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-        var boardId = extractBoardId(session);
-        if (!sessionStorage.isValidSession(boardId)) {
+        var sessionId = extractSessionId(session);
+        if (!sessionStorage.isValidSession(sessionId)) {
             session.close(CloseStatus.BAD_DATA);
         }
 
-        if (boardId != null) {
-            sessionStorage.addWsSession(boardId, session);
+        if (sessionId != null) {
+            sessionStorage.addWsSession(sessionId, session);
         } else {
             session.close(CloseStatus.BAD_DATA);
         }
@@ -39,22 +39,22 @@ public class BoardWebSocketHandler extends TextWebSocketHandler {
             session.sendMessage(new TextMessage("_pong"));
         }
 
-        var boardId = extractBoardId(session);
-        if (!sessionStorage.isValidSession(boardId)) {
+        var sessionId = extractSessionId(session);
+        if (!sessionStorage.isValidSession(sessionId)) {
             session.close(CloseStatus.NOT_ACCEPTABLE);
         }
     }
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
-        var boardId = extractBoardId(session);
-        if (boardId != null) {
-            sessionStorage.removeWsSession(boardId, session);
-            log.info("Client disconnected from board: {}", boardId);
+        var sessionId = extractSessionId(session);
+        if (sessionId != null) {
+            sessionStorage.removeWsSession(sessionId, session);
+            log.info("Client disconnected from board: {}", sessionId);
         }
     }
 
-    private String extractBoardId(WebSocketSession session) {
+    private String extractSessionId(WebSocketSession session) {
         try {
             URI uri = session.getUri();
             if (uri == null) return null;

@@ -27,6 +27,7 @@ public class SessionStorage {
     }
 
     public void restoreSession(String sessionId) {
+        log.info("Restoring session with id {}", sessionId);
         activeSessions.computeIfAbsent(sessionId, k -> new SessionData());
     }
 
@@ -36,7 +37,7 @@ public class SessionStorage {
 
     public void addWsSession(String sessionId, WebSocketSession session) {
         if (!isValidSession(sessionId)) {
-            throw new IllegalArgumentException("Invalid session id " + sessionId);
+            log.warn("Invalid session id {}", sessionId);
         }
 
         var sessionData = activeSessions.getOrDefault(sessionId, new SessionData());
@@ -46,7 +47,7 @@ public class SessionStorage {
 
     public void removeWsSession(String sessionId, WebSocketSession session) {
         if (!isValidSession(sessionId)) {
-            throw new IllegalArgumentException("Invalid session id " + sessionId);
+            log.warn("Invalid session id {}", sessionId);
         }
         activeSessions.get(sessionId).removeWebSocketSession(session);
         log.info("Removing WS session with id {}", sessionId);
