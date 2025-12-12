@@ -1,5 +1,6 @@
 <script setup>
 import {useBoardStore} from "@/stores/boardStore";
+import router from "@/router/index.js";
 
 const store = useBoardStore()
 
@@ -8,6 +9,11 @@ function copyUrl() {
         navigator.clipboard.writeText(store.webhookUrl)
         alert("Copied!")
     }
+}
+
+const handleReset = async () => {
+    await store.reset();
+    await router.push("/");
 }
 </script>
 
@@ -52,7 +58,14 @@ function copyUrl() {
         {{ store.isConnected ? 'Connected' : 'Offline' }}
         </v-chip>
 
-        <v-btn icon="mdi-logout" size="small" color="error" variant="text" class="ml-2" title="Reset Session"></v-btn>
+        <v-btn icon="mdi-logout"
+               size="small"
+               color="error"
+               variant="text"
+               class="ml-2"
+               title="Reset Session"
+               @click="handleReset"
+        ></v-btn>
     </v-app-bar>
 </template>
 

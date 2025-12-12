@@ -1,5 +1,6 @@
-import axios from "axios";
 import {defineStore} from "pinia";
+
+import {boardApi} from "@/services/api.js";
 
 export const useBoardStore = defineStore("boardStore", {
     state: () => ({
@@ -17,26 +18,18 @@ export const useBoardStore = defineStore("boardStore", {
     }),
 
     actions: {
-        async init() {
-            const sessionId = await this.startSession();
-            if (!sessionId) {
-                console.error('Failed to create session');
-                return;
-            }
-
+        setSessionAndConnect(sessionId) {
             this.sessionId = sessionId;
             this.webhookUrl = `https://mockboard.dev/m/${this.sessionId}`;
             this.connectWs();
         },
 
         connectWs() {
-            // Close existing socket if any
             if (this.socket) {
                 this.socket.close();
                 this.socket = null;
             }
 
-            // Clear any pending reconnect
             if (this.reconnectTimer) {
                 clearTimeout(this.reconnectTimer);
                 this.reconnectTimer = null;
@@ -139,22 +132,26 @@ export const useBoardStore = defineStore("boardStore", {
             }, delay);
         },
 
-        async startSession() {
-            try {
-                const res = await axios.post('/api/start', {});
-                return res.data?.sessionId || null;
-            } catch (e) {
-                console.error("Error starting session", e);
-                return null;
+        disconnect() {
+            console.log('Disconnecting...');
+            if (this.socket) {
+                this.socket.close(1000, 'Page navigation');
             }
+            this.stopHeartbeat();
+            if (this.reconnectTimer) {
+                clearTimeout(this.reconnectTimer);
+                this.reconnectTimer = null;
+            }
+            this.socket = null;
+            this.isConnected = false;
         },
 
         async reset() {
-            try {
-                await axios.post('/api/reset', {});
-            } catch (e) {
-                console.error("Failed to reset", e);
-            }
+            await boardApi.reset();
+            this.disconnect();
+            this.requests = [];
+            this.sessionId = null;
+            this.webhookUrl = '';
         }
     }
 });

@@ -1,15 +1,31 @@
 <script setup>
-import { onMounted } from 'vue'
-import { useRoute } from 'vue-router'
-import { useBoardStore } from '@/stores/boardStore'
+import {onBeforeUnmount, onMounted} from 'vue'
+
+import {useBoardStore} from '@/stores/boardStore'
 import TopBar from '@/components/TopBar.vue'
 import RequestHistory from '@/components/RequestHistory.vue'
+import {boardApi} from "@/services/api.js";
+import router from "@/router/index.js";
 
-const route = useRoute()
 const store = useBoardStore()
 
-onMounted(() => {
-    store.init()
+onMounted(async () => {
+    let sessionId = history.state?.sessionId;
+    if (!sessionId) {
+        sessionId = await boardApi.startSession();
+    }
+
+    if (!sessionId) {
+        await store.reset();
+        await router.push('/');
+        return;
+    }
+
+    store.setSessionAndConnect(sessionId);
+})
+
+onBeforeUnmount(() => {
+    store.disconnect()
 })
 </script>
 

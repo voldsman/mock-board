@@ -12,9 +12,10 @@ const router = createRouter({
       component: LandingView
     },
     {
-      path: '/board/:sessionId',
+      path: '/board',
       name: 'board',
-      component: BoardView
+      component: BoardView,
+      props: true,
     }
   ],
 })
