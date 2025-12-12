@@ -36,10 +36,7 @@ public class RequestCaptureService {
                     .build();
             System.out.println(requestData);
 
-            Map<String, Object> result = new HashMap<>();
-            result.put("event", WsEventType.REQUEST_CAPTURED);
-            result.put("data", requestData);
-            wsPublisher.broadcast(sessionId, objectMapper.writeValueAsString(result));
+            wsPublisher.broadcast(sessionId, WsEventType.REQUEST_CAPTURED, requestData);
         } catch (Exception e) {
             e.printStackTrace();
         }
