@@ -116,7 +116,7 @@ export const useBoardStore = defineStore("boardStore", {
             console.log(`Reconnecting in ${delay}ms... (attempt ${this.reconnectAttempts})`);
 
             this.reconnectTimer = setTimeout(async () => {
-                const newSessionId = await this.startSession();
+                const newSessionId = await boardApi.startSession();
                 if (newSessionId) {
                     this.sessionId = newSessionId;
                     this.webhookUrl = `https://mockboard.dev/m/${this.sessionId}`;

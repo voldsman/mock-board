@@ -1,9 +1,11 @@
 package dev.mockboard.storage;
 
+import dev.mockboard.storage.model.SessionData;
 import dev.mockboard.utils.SessionIdGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -12,6 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class BoardSessionStorage {
 
     private final Set<String> activeSessions = ConcurrentHashMap.newKeySet();
+    private final Map<String, SessionData> sessions = new ConcurrentHashMap<>();
 
     public String createSession() {
         var sessionId = SessionIdGenerator.generate();

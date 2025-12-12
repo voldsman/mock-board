@@ -1,7 +1,21 @@
 <script setup>
 import {useBoardStore} from "@/stores/boardStore.js";
+import {onMounted, onUnmounted, ref} from "vue";
 
 const store = useBoardStore()
+
+const refreshKey = ref(0)
+let interval;
+
+onMounted(() => {
+    interval = setInterval(() => {
+        refreshKey.value++;
+    }, 30_000);
+})
+
+onUnmounted(() => {
+    if (interval) clearInterval(interval);
+})
 
 function getMethodColor(method) {
   const map = {
@@ -19,6 +33,21 @@ function getStatusColor(status) {
   if (status >= 400 && status < 500) return 'text-orange'
   if (status >= 500) return 'text-red'
   return 'text-grey'
+}
+
+function formatRelativeTime(timestamp) {
+    const now = Date.now();
+    const diff = now - timestamp;
+
+    const seconds = Math.floor(diff / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+
+    if (seconds < 60) return 'just now';
+    if (minutes < 60) return `${minutes}m ago`;
+    if (hours < 24) return `${hours}h ago`;
+    return `${days}d ago`;
 }
 </script>
 
@@ -70,8 +99,8 @@ function getStatusColor(status) {
                 <span :class="getStatusColor(req.status)" class="font-weight-bold text-caption">
                     {{ req.status || '---' }}
                 </span>
-                <span class="text-caption text-disabled font-monospace">
-                    {{ new Date().toLocaleTimeString() }}
+                <span :key="refreshKey" class="text-caption text-disabled font-monospace">
+                    {{ formatRelativeTime(req.timestamp) }}
                 </span>
                 </v-list-item-subtitle>
             </v-list-item>
