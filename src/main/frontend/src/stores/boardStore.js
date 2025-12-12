@@ -11,6 +11,8 @@ export const useBoardStore = defineStore("boardStore", {
         requests: [],
         rules: [],
 
+        selectedRequest: null,
+
         socket: null,
         heartbeatInterval: null,
         pongTimeout: null,
@@ -153,10 +155,19 @@ export const useBoardStore = defineStore("boardStore", {
             this.isConnected = false;
         },
 
+        selectRequest(req) {
+          this.selectedRequest = req;
+        },
+
+        clearSelectedRequest() {
+            this.selectedRequest = null;
+        },
+
         async reset() {
             await boardApi.reset();
             this.disconnect();
             this.requests = [];
+            this.selectedRequest = null;
             this.sessionId = null;
             this.webhookUrl = '';
         },

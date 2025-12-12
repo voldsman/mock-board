@@ -18,59 +18,58 @@ const handleReset = async () => {
 </script>
 
 <template>
-    <v-app-bar density="default" elevation="1" color="surface">
-        <v-app-bar-title class="fond-weight-bold ml-2" style="max-width: 200px;">
-            <span class="text-primary">&lt;/&gt;</span> MockBoard
-        </v-app-bar-title>
+    <nav class="navbar bg-surface border-bottom shadow-sm">
+        <div class="container-fluid px-4">
+            <span class="navbar-brand mb-0 h1">
+                <span class="text-primary">&lt;/&gt;</span> MockBoard
+            </span>
 
-        <v-spacer></v-spacer>
-
-        <div class="mt-5" style="width: 500px; max-width: 800px;">
-            <v-text-field
-                :model-value="store.webhookUrl"
-                readonly
-                variant="outlined"
-                density="compact"
-                bg-color="background"
-                placeholder="Waiting for session..."
-                prepend-inner-icon="mdi-web"
-                class="font-monospace"
-            >
-                <template v-slot:append-inner>
-                    <v-btn 
-                        size="small"
-                        color="primary"
-                        variant="text"
+            <div class="d-flex align-items-center flex-grow-1 mx-5" style="max-width: 600px;">
+                <div class="input-group">
+                    <span class="input-group-text bg-dark border-secondary">
+                        <i class="bi bi-globe"></i>
+                    </span>
+                    <input
+                        type="text"
+                        class="form-control bg-dark border-secondary text-light font-monospace"
+                        :value="store.webhookUrl"
+                        readonly
+                        placeholder="Waiting for session..."
+                    />
+                    <button
+                        class="btn btn-primary"
+                        type="button"
                         @click="copyUrl"
-                        >Copy</v-btn>
-                </template>
-            </v-text-field>
+                    >
+                        Copy
+                    </button>
+                </div>
+            </div>
+
+            <div class="d-flex align-items-center gap-3">
+                <span
+                    class="badge rounded-pill"
+                    :class="store.isConnected ? 'bg-success' : 'bg-danger'"
+                >
+                    {{ store.isConnected ? 'Connected' : 'Offline' }}
+                </span>
+                <button
+                    class="btn btn-outline-danger btn-sm"
+                    @click="handleReset"
+                    title="Reset Session"
+                >
+                    <i class="bi bi-box-arrow-right"></i>
+                </button>
+            </div>
         </div>
-
-        <v-spacer></v-spacer>
-
-        <v-chip
-            :color="store.isConnected ? 'success' : 'error'"
-            size="small"
-            class="mr-4 fond-weight-bold"
-            variant="flat"
-        >
-        {{ store.isConnected ? 'Connected' : 'Offline' }}
-        </v-chip>
-
-        <v-btn icon="mdi-logout"
-               size="small"
-               color="error"
-               variant="text"
-               class="ml-2"
-               title="Reset Session"
-               @click="handleReset"
-        ></v-btn>
-    </v-app-bar>
+    </nav>
 </template>
 
 <style scoped>
+.navbar {
+    background-color: #3f3951 !important;
+}
 .font-monospace {
-  font-family: 'Roboto Mono', monospace !important;
+    font-family: 'Roboto Mono', monospace !important;
 }
 </style>

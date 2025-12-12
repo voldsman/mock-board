@@ -16,5 +16,9 @@ const handleStart = async () => {
 </script>
 
 <template>
-    <v-btn @click="handleStart">Start Session</v-btn>
+    <div class="min-vh-100 d-flex align-items-center justify-content-center">
+        <button class="btn btn-primary btn-lg" @click="handleStart">
+            <i class="bi bi-play-fill me-2"></i>Start Session
+        </button>
+    </div>
 </template>

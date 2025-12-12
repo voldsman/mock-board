@@ -2,106 +2,75 @@
 import {onMounted, onUnmounted, ref} from "vue";
 import {useBoardStore} from "@/stores/boardStore.js";
 import {formatRelativeTime} from "@/utils/timeFormatter.js";
+import {getMethodColor, getStatusColor} from "@/utils/colors.js";
 
-const store = useBoardStore()
-
-const refreshKey = ref(0)
+const store = useBoardStore();
+const refreshKey = ref(0);
 let interval;
 
 onMounted(() => {
-    interval = setInterval(() => {
-        refreshKey.value++;
-    }, 30_000);
-})
+    interval = setInterval(() => { refreshKey.value++; }, 30_000);
+});
 
 onUnmounted(() => {
     if (interval) clearInterval(interval);
-})
+});
 
-function getMethodColor(method) {
-  const map = {
-    GET: 'blue',
-    POST: 'green',
-    PUT: 'orange',
-    DELETE: 'red',
-    PATCH: 'purple'
-  }
-  return map[method] || 'grey'
-}
-
-function getStatusColor(status) {
-  if (status >= 200 && status < 300) return 'text-green'
-  if (status >= 400 && status < 500) return 'text-orange'
-  if (status >= 500) return 'text-red'
-  return 'text-grey'
+function handleSelect(req) {
+    store.selectRequest(req);
 }
 </script>
 
 <template>
-    <v-navigation-drawer permanent width="450" color="surface" class="border-e">
-        <div class="d-flex align-center px-4 py-3 border-b" style="height: 64px;">
-            <v-icon icon="mdi-history" color="grey" class="mr-2"></v-icon>
-            <span class="text-subtitle-2 font-weight-bold text-medium-emphasis">REQUESTS</span>
-            <v-spacer></v-spacer>
-            <v-chip size="small" color="primary" variant="flat">
-                {{ store.requests.length > 0 ? store.requests.length : 0 }}
-            </v-chip>
+    <div class="d-flex flex-column bg-surface border-end" style="width: 450px; min-width: 450px; height: calc(100vh - 57px);"> <div class="d-flex align-items-center px-4 py-3 border-bottom" style="height: 64px;">
+        <i class="bi bi-clock-history text-secondary me-2"></i>
+        <span class="text-uppercase fw-bold text-secondary small">REQUESTS</span>
+        <div class="ms-auto">
+            <span class="badge bg-primary rounded-pill">{{ store.requests.length }}</span>
         </div>
+    </div>
 
-        <v-list lines="two" class="pa-0">
-            <v-list-item 
-                v-if="store.requests.length === 0"
-                value="placeholder" 
-                color="primary"
-                class="border-b"
-                disabled
-            >
-            Received requests goes here
-            </v-list-item>
+        <div class="flex-grow-1 overflow-auto">
+            <div class="list-group list-group-flush">
+                <div v-if="store.requests.length === 0" class="text-center py-5 text-secondary">
+                    Waiting for requests...
+                </div>
 
-            <v-list-item 
-                v-for="(req, index) in store.requests"
-                :key="index"
-                :value="req"
-                class="border-b request-item"
-            >
-                <template v-slot:prepend>
-                <v-chip 
-                    label 
-                    size="small" 
-                    :color="getMethodColor(req.method)" 
-                    class="font-weight-bold mr-2 text-uppercase"
-                    style="min-width: 60px; justify-content: center;"
+                <div v-for="(req, index) in store.requests"
+                     :key="index"
+                     class="list-group-item list-group-item-action bg-surface border-bottom cursor-pointer"
+                     :class="{ 'active-item': store.selectedRequest === req }"
+                     @click="handleSelect(req)"
                 >
-                    {{ req.method }}
-                </v-chip>
-                </template>
-
-                <v-list-item-title class="font-monospace text-body-2 font-weight-medium">
-                {{ req.path }}
-                </v-list-item-title>
-                
-                <v-list-item-subtitle class="d-flex justify-space-between mt-1 align-center">
-                <span :class="getStatusColor(req.status)" class="font-weight-bold text-caption">
-                    {{ req.status || '---' }}
-                </span>
-                <span :key="refreshKey" class="text-caption text-disabled font-monospace">
-                    {{ formatRelativeTime(req.timestamp) }}
-                </span>
-                </v-list-item-subtitle>
-            </v-list-item>
-        </v-list>
-    </v-navigation-drawer>
+                    <div class="d-flex align-items-start gap-2 mb-2">
+                        <span class="badge text-uppercase fw-bold" :class="`bg-${getMethodColor(req.method)}`" style="min-width: 60px;">
+                            {{ req.method }}
+                        </span>
+                        <div class="flex-grow-1">
+                            <div class="font-monospace small fw-medium text-light">{{ req.path }}</div>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mt-2">
+                        <span :class="getStatusColor(req.status)" class="fw-bold small">{{ req.status || '---' }}</span>
+                        <span :key="refreshKey" class="text-secondary small font-monospace">
+                            {{ formatRelativeTime(req.timestamp) }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </template>
 
 <style scoped>
-.font-monospace {
-  font-family: 'Roboto Mono', monospace !important;
+.bg-surface {
+    background-color: #3f3951;
 }
-.border-b {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
+.list-group-item:hover {
+    cursor: pointer;
 }
-.border-e {
-  border-right: 1px solid rgba(255, 255, 255, 0.12) !important;
+.active-item {
+    background-color: #4a4359 !important;
+    border-left: 4px solid #0d6efd !important;
 }
 </style>

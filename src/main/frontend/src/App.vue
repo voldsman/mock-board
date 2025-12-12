@@ -3,13 +3,13 @@ import {RouterView} from "vue-router";
 </script>
 
 <template>
-    <v-app>
-        <v-main>
-            <RouterView />
-        </v-main>
-    </v-app>
+    <div class="min-vh-100">
+        <RouterView />
+    </div>
 </template>
 
 <style>
-
+body {
+    background-color: #352945;
+}
 </style>
