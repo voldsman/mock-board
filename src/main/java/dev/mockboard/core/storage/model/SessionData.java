@@ -1,4 +1,4 @@
-package dev.mockboard.storage.model;
+package dev.mockboard.core.storage.model;
 
 import lombok.Data;
 import lombok.Getter;

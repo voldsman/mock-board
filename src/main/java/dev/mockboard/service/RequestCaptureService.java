@@ -1,7 +1,8 @@
 package dev.mockboard.service;
 
 import dev.mockboard.Constants;
-import dev.mockboard.storage.model.RequestData;
+import dev.mockboard.core.enums.WsEventType;
+import dev.mockboard.core.storage.model.RequestData;
 import dev.mockboard.web.ws.WsPublisher;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -35,7 +36,10 @@ public class RequestCaptureService {
                     .build();
             System.out.println(requestData);
 
-            wsPublisher.broadcast(sessionId, objectMapper.writeValueAsString(requestData));
+            Map<String, Object> result = new HashMap<>();
+            result.put("event", WsEventType.REQUEST_CAPTURED);
+            result.put("data", requestData);
+            wsPublisher.broadcast(sessionId, objectMapper.writeValueAsString(result));
         } catch (Exception e) {
             e.printStackTrace();
         }

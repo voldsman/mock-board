@@ -1,6 +1,6 @@
-package dev.mockboard.config;
+package dev.mockboard.core.config;
 
-import dev.mockboard.config.handler.BoardWebSocketHandler;
+import dev.mockboard.core.config.handler.BoardWebSocketHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;

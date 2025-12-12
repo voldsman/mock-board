@@ -1,6 +1,6 @@
 package dev.mockboard.service;
 
-import dev.mockboard.storage.SessionStorage;
+import dev.mockboard.core.storage.SessionStorage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

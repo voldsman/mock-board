@@ -1,6 +1,7 @@
 import {defineStore} from "pinia";
 
 import {boardApi} from "@/services/api.js";
+import RequestData from "@/models/RequestData.js";
 
 export const useBoardStore = defineStore("boardStore", {
     state: () => ({
@@ -59,7 +60,13 @@ export const useBoardStore = defineStore("boardStore", {
 
                 try {
                     const data = JSON.parse(event.data);
-                    this.requests.unshift(data);
+                    if (data.event) {
+                        if (data.event === "REQUEST_CAPTURED") {
+                            this.attachRequestHistoryData(data.data);
+                        }
+                    } else {
+                        console.log("Not event type provided", data)
+                    }
                 } catch (e) {
                     console.log("Message:", event.data);
                 }
@@ -152,6 +159,21 @@ export const useBoardStore = defineStore("boardStore", {
             this.requests = [];
             this.sessionId = null;
             this.webhookUrl = '';
+        },
+
+        attachRequestHistoryData(data) {
+            const reqData = new RequestData();
+            reqData.method = data.method;
+            reqData.path = data.path;
+            reqData.query = data.query;
+            reqData.protocol = data.protocol;
+            reqData.headers = data.headers;
+            reqData.body = data.body??null;
+            reqData.contentType = data.contentType;
+            reqData.contentLength = data.contentLength;
+            reqData.status = data.status;
+            reqData.timestamp = data.timestamp;
+            this.requests.unshift(reqData);
         }
     }
 });

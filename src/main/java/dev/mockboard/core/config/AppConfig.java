@@ -1,4 +1,4 @@
-package dev.mockboard.config;
+package dev.mockboard.core.config;
 
 import org.springframework.context.annotation.Configuration;
 

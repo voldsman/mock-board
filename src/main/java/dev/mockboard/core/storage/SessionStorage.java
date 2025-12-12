@@ -1,6 +1,6 @@
-package dev.mockboard.storage;
+package dev.mockboard.core.storage;
 
-import dev.mockboard.storage.model.SessionData;
+import dev.mockboard.core.storage.model.SessionData;
 import dev.mockboard.utils.SessionIdGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -38,6 +38,7 @@ public class SessionStorage {
     public void addWsSession(String sessionId, WebSocketSession session) {
         if (!isValidSession(sessionId)) {
             log.warn("Invalid session id {}", sessionId);
+            return;
         }
 
         var sessionData = activeSessions.getOrDefault(sessionId, new SessionData());
@@ -48,6 +49,7 @@ public class SessionStorage {
     public void removeWsSession(String sessionId, WebSocketSession session) {
         if (!isValidSession(sessionId)) {
             log.warn("Invalid session id {}", sessionId);
+            return;
         }
         activeSessions.get(sessionId).removeWebSocketSession(session);
         log.info("Removing WS session with id {}", sessionId);
