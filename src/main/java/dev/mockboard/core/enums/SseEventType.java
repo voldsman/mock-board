@@ -1,5 +1,7 @@
 package dev.mockboard.core.enums;
 
-public enum WsEventType {
+public enum SseEventType {
+    CONNECTED,
+    HEARTBEAT,
     REQUEST_CAPTURED
 }

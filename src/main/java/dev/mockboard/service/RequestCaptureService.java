@@ -1,13 +1,12 @@
 package dev.mockboard.service;
 
 import dev.mockboard.Constants;
-import dev.mockboard.core.enums.WsEventType;
+import dev.mockboard.core.enums.SseEventType;
 import dev.mockboard.core.storage.model.RequestData;
-import dev.mockboard.web.ws.WsPublisher;
+import dev.mockboard.web.sse.SsePublisher;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import tools.jackson.databind.ObjectMapper;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -17,8 +16,7 @@ import java.util.*;
 @RequiredArgsConstructor
 public class RequestCaptureService {
 
-    private final WsPublisher wsPublisher;
-    private final ObjectMapper objectMapper;
+    private final SsePublisher ssePublisher;
 
     public void captureRequest(String sessionId, HttpServletRequest request) {
         try {
@@ -36,7 +34,7 @@ public class RequestCaptureService {
                     .build();
             System.out.println(requestData);
 
-            wsPublisher.broadcast(sessionId, WsEventType.REQUEST_CAPTURED, requestData);
+            ssePublisher.publish(sessionId, SseEventType.REQUEST_CAPTURED, requestData);
         } catch (Exception e) {
             e.printStackTrace();
         }

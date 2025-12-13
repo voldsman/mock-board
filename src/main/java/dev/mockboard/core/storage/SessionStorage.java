@@ -5,12 +5,10 @@ import dev.mockboard.utils.SessionIdGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.socket.CloseStatus;
-import org.springframework.web.socket.WebSocketSession;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-import java.io.IOException;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
@@ -35,45 +33,34 @@ public class SessionStorage {
         return !CollectionUtils.isEmpty(activeSessions) && activeSessions.containsKey(sessionId);
     }
 
-    public void addWsSession(String sessionId, WebSocketSession session) {
-        if (!isValidSession(sessionId)) {
-            log.warn("Invalid session id {}", sessionId);
-            return;
-        }
+    public void addEmitter(String sessionId, SseEmitter emitter) {
+        if (!isValidSession(sessionId)) return;
 
-        var sessionData = activeSessions.getOrDefault(sessionId, new SessionData());
-        sessionData.addWebSocketSession(session);
+        var sessionData = activeSessions.get(sessionId);
+        sessionData.addEmitter(emitter);
         sessionData.touchLastAccessTime();
     }
 
-    public void removeWsSession(String sessionId, WebSocketSession session) {
-        if (!isValidSession(sessionId)) {
-            log.warn("Invalid session id {}", sessionId);
-            return;
-        }
-        activeSessions.get(sessionId).removeWebSocketSession(session);
-        log.info("Removing WS session with id {}", sessionId);
+    public void removeEmitter(String sessionId, SseEmitter emitter) {
+        if (!isValidSession(sessionId)) return;
+
+        activeSessions.get(sessionId).removeEmitter(emitter);
     }
 
-    public Set<WebSocketSession> getWsSessions(String sessionId) {
-        if (!isValidSession(sessionId)) {
-            throw new IllegalArgumentException("Invalid session id " + sessionId);
-        }
-
-        return activeSessions.get(sessionId).getWebSocketSessions();
+    public List<SseEmitter> getEmitters(String sessionId) {
+        if (!isValidSession(sessionId)) return List.of();
+        return activeSessions.get(sessionId).getEmitters();
     }
 
     public void removeSession(String sessionId) {
-        if (!isValidSession(sessionId)) {
-            throw new IllegalArgumentException("Invalid session id " + sessionId);
-        }
+        if (!isValidSession(sessionId)) return;
 
         var sessionData = activeSessions.get(sessionId);
-        for (var webSocketSession : sessionData.getWebSocketSessions()) {
+        for (var emitter : sessionData.getEmitters()) {
             try {
-                webSocketSession.close(CloseStatus.NORMAL);
-            } catch (IOException e) {
-                log.error("Failed to close web socket session", e);
+                emitter.complete();
+            } catch (Exception e) {
+                // ignore
             }
         }
         activeSessions.remove(sessionId);

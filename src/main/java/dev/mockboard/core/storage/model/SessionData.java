@@ -2,17 +2,17 @@ package dev.mockboard.core.storage.model;
 
 import lombok.Data;
 import lombok.Getter;
-import org.springframework.web.socket.WebSocketSession;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.Serializable;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Data
 public class SessionData implements Serializable {
 
-    private final Set<WebSocketSession> webSocketSessions = ConcurrentHashMap.newKeySet();
+    private final List<SseEmitter> emitters = new CopyOnWriteArrayList<>();
     private final BoardData boardData = new BoardData();
 
     @Getter
@@ -22,11 +22,11 @@ public class SessionData implements Serializable {
         lastAccessTime.set(System.currentTimeMillis());
     }
 
-    public void addWebSocketSession(WebSocketSession webSocketSession) {
-        webSocketSessions.add(webSocketSession);
+    public void addEmitter(SseEmitter emitter) {
+        emitters.add(emitter);
     }
 
-    public void removeWebSocketSession(WebSocketSession webSocketSession) {
-        webSocketSessions.remove(webSocketSession);
+    public void removeEmitter(SseEmitter emitter) {
+        emitters.remove(emitter);
     }
 }

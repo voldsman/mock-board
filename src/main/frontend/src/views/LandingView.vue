@@ -1,6 +1,6 @@
 <script setup>
 import { useRouter } from 'vue-router';
-import {boardApi} from "@/services/api.js";
+import {boardApi} from "@/services/apiService.js";
 
 const router = useRouter();
 

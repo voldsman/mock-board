@@ -6,3 +6,10 @@ spring:
     threads:
         virtual:
             enabled: true
+    mvc:
+        async:
+            request-timeout: 3600000
+logging:
+    level:
+      dev:
+          mockboard: DEBUG
