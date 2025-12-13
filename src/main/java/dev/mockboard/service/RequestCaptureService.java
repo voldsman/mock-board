@@ -1,7 +1,7 @@
 package dev.mockboard.service;
 
 import dev.mockboard.Constants;
-import dev.mockboard.core.enums.WsEventType;
+import dev.mockboard.core.events.EventType;
 import dev.mockboard.core.storage.model.RequestData;
 import dev.mockboard.web.ws.WsPublisher;
 import jakarta.servlet.http.HttpServletRequest;
@@ -36,7 +36,7 @@ public class RequestCaptureService {
                     .build();
             System.out.println(requestData);
 
-            wsPublisher.broadcast(sessionId, WsEventType.REQUEST_CAPTURED, requestData);
+            wsPublisher.broadcast(sessionId, EventType.REQUEST_CAPTURED, requestData);
         } catch (Exception e) {
             e.printStackTrace();
         }
