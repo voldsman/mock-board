@@ -10,11 +10,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Event {
-    private String type;
+    private EventType type;
     private Object data;
     private Long timestamp;
 
-    public static Event of(String type, Object data) {
+    public static Event of(EventType type, Object data) {
         return Event.builder()
                 .type(type)
                 .data(data)

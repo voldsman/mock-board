@@ -12,7 +12,7 @@ import java.time.Duration;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping(Constants.API_PATH_PREFIX)
 @RequiredArgsConstructor
 public class ApiController {
 

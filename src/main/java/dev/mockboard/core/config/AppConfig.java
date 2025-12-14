@@ -30,9 +30,9 @@ public class AppConfig implements WebMvcConfigurer {
     public AsyncTaskExecutor asyncTaskExecutor() {
         var executor = new ThreadPoolTaskExecutor();
         executor.setThreadFactory(Thread.ofVirtual().factory());
-        executor.setCorePoolSize(10);
-        executor.setMaxPoolSize(200);
-        executor.setQueueCapacity(100);
+        executor.setCorePoolSize(5);
+        executor.setMaxPoolSize(300);
+        executor.setQueueCapacity(300);
         executor.setThreadNamePrefix("long-poll-");
         executor.initialize();
         return executor;

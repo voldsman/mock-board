@@ -1,7 +1,7 @@
 <script setup>
 import {onBeforeUnmount, onMounted} from 'vue'
 import {useBoardStore} from '@/stores/boardStore'
-import {boardApi} from "@/services/api.js";
+import {boardApi} from "@/services/apiService.js";
 import router from "@/router/index.js";
 import TopBar from '@/components/TopBar.vue'
 import RequestHistory from '@/components/RequestHistory.vue'
