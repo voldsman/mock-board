@@ -1,4 +1,4 @@
-package dev.mockboard.utils;
+package dev.mockboard.core.utils;
 
 import dev.mockboard.Constants;
 

@@ -1,7 +1,7 @@
 package dev.mockboard.core.storage;
 
 import dev.mockboard.core.storage.model.SessionData;
-import dev.mockboard.utils.SessionIdGenerator;
+import dev.mockboard.core.utils.SessionIdGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
